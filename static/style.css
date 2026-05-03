@@ -1,0 +1,103 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #f0f4f8;
+    font-family: Arial, sans-serif;
+    padding: 40px 20px;
+}
+
+.container {
+    max-width: 680px;
+    margin: auto;
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+h1 {
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 6px;
+}
+
+.subtitle {
+    color: #888;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+.section {
+    margin-bottom: 24px;
+}
+
+.section h2 {
+    font-size: 16px;
+    color: #2980b9;
+    margin-bottom: 10px;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    resize: vertical;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #2980b9;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    background: #2980b9;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1f6391;
+}
+.job-block {
+    margin-bottom: 16px;
+}
+
+.add-btn {
+    width: auto;
+    padding: 8px 16px;
+    background: #27ae60;
+    color: white;
+    font-size: 13px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.add-btn:hover { background: #1e8449; }
+
+.remove-btn {
+    width: auto;
+    padding: 6px 12px;
+    background: #e74c3c;
+    color: white;
+    font-size: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 6px;
+}
+
+.remove-btn:hover { background: #c0392b; }
