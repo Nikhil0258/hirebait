@@ -290,7 +290,6 @@ select.dp-sel option{background:#1a1a1a;color:var(--text)}
       </div>
       <div class="row2">
         <div class="field"><label>GitHub</label><input data-k="github" placeholder="github.com/ravi"/></div>
-        <div class="field"><label>Job Title / Role</label><input data-k="jobtitle" placeholder="Data Engineer"/></div>
       </div>
     </div>
 
@@ -355,9 +354,16 @@ select.dp-sel option{background:#1a1a1a;color:var(--text)}
           <div class="row2">
             <div class="duration-wrap">
               <label>Duration / Year</label>
-              <div class="dur-half">
-                <select class="dp-sel" data-p="dur_sy" data-proj="0" onchange="buildDuration(0,'proj')"><option value="">From</option></select>
-                <select class="dp-sel" data-p="dur_ey" data-proj="0" onchange="buildDuration(0,'proj')"><option value="">To</option></select>
+              <div class="dur-grid">
+                <div class="dur-half">
+                  <select class="dp-sel" data-p="dur_sm" data-proj="0" onchange="buildDuration(0,'proj')"><option value="">Month</option><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
+                  <select class="dp-sel" data-p="dur_sy" data-proj="0" onchange="buildDuration(0,'proj')"><option value="">Year</option></select>
+                </div>
+                <div class="dur-sep">–</div>
+                <div class="dur-half">
+                  <select class="dp-sel" data-p="dur_em" data-proj="0" onchange="buildDuration(0,'proj')"><option value="">Month</option><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
+                  <select class="dp-sel" data-p="dur_ey" data-proj="0" onchange="buildDuration(0,'proj')"><option value="">Year</option></select>
+                </div>
               </div>
               <input type="hidden" data-p="duration" data-proj="0" value=""/>
             </div>
@@ -445,7 +451,7 @@ select.dp-sel option{background:#1a1a1a;color:var(--text)}
 /* ══ STATE ══ */
 const S = {
   name:'', email:'', phone:'', linkedin:'', github:'',
-  jobtitle:'', summary:'', skills:'',
+  summary:'', skills:'',
   certifications:'', achievements:'', languages:'',
   experiences:[{company:'',role:'',duration:'',description:''}],
   projects:[{title:'',tech:'',duration:'',link:'',desc:''}],
@@ -768,7 +774,7 @@ function syncForm(){
   const form=document.getElementById('dlform');
   form.querySelectorAll('input[type=hidden]:not([name=template]):not([name=accent_color])').forEach(e=>e.remove());
   const add=(n,v)=>{const i=document.createElement('input');i.type='hidden';i.name=n;i.value=v;form.appendChild(i);};
-  ['name','email','phone','linkedin','github','jobtitle','summary','skills','certifications','achievements','languages'].forEach(k=>add(k,S[k]));
+  ['name','email','phone','linkedin','github','summary','skills','certifications','achievements','languages'].forEach(k=>add(k,S[k]));
   S.experiences.forEach(e=>{add('company',e.company||'');add('role',e.role||'');add('duration',e.duration||'');add('description',e.description||'');});
   add('projects_json', JSON.stringify(S.projects));
   add('education_json', JSON.stringify(S.education));
@@ -862,16 +868,9 @@ function populateYears(sel, from=2000, to=CUR_YEAR, extraOpt='') {
 }
 
 function initYearSelects() {
-  document.querySelectorAll('select[data-e="dur_sy"], select[data-e="dur_ey"]').forEach(s => {
-    const lbl = s.dataset.e === 'dur_sy' ? 'Year' : 'Year';
-    populateYears(s);
-  });
-  document.querySelectorAll('select[data-p="dur_sy"], select[data-p="dur_ey"]').forEach(s => {
-    populateYears(s, 2000, CUR_YEAR, 'Present');
-  });
-  document.querySelectorAll('select[data-ed="year_s"], select[data-ed="year_e"]').forEach(s => {
-    populateYears(s, 1990, CUR_YEAR, 'Present');
-  });
+  document.querySelectorAll('select[data-e="dur_sy"], select[data-e="dur_ey"]').forEach(s => populateYears(s));
+  document.querySelectorAll('select[data-p="dur_sy"], select[data-p="dur_ey"]').forEach(s => populateYears(s, 2000, CUR_YEAR, 'Present'));
+  document.querySelectorAll('select[data-ed="year_s"], select[data-ed="year_e"]').forEach(s => populateYears(s, 1990, CUR_YEAR, 'Present'));
 }
 
 function buildDuration(idx, type) {
@@ -886,9 +885,13 @@ function buildDuration(idx, type) {
     const hidden = document.querySelector(`input[data-e="duration"][data-job="${idx}"]`);
     if(hidden) { hidden.value = val; if(S.experiences[idx]) S.experiences[idx].duration = val; }
   } else if (type === 'proj') {
+    const sm = document.querySelector(`select[data-p="dur_sm"][data-proj="${idx}"]`)?.value || '';
     const sy = document.querySelector(`select[data-p="dur_sy"][data-proj="${idx}"]`)?.value || '';
+    const em = document.querySelector(`select[data-p="dur_em"][data-proj="${idx}"]`)?.value || '';
     const ey = document.querySelector(`select[data-p="dur_ey"][data-proj="${idx}"]`)?.value || '';
-    const val = sy && ey ? `${sy} – ${ey}` : sy || ey;
+    const start = [sm, sy].filter(Boolean).join(' ');
+    const end   = [em, ey].filter(Boolean).join(' ');
+    const val   = start && end ? `${start} – ${end}` : start || end;
     const hidden = document.querySelector(`input[data-p="duration"][data-proj="${idx}"]`);
     if(hidden) { hidden.value = val; if(S.projects[idx]) S.projects[idx].duration = val; }
   } else if (type === 'edu') {
@@ -941,9 +944,16 @@ function makeDurationHTML_exp(idx) {
 function makeDurationHTML_proj(idx) {
   return `<div class="duration-wrap">
     <label>Duration / Year</label>
-    <div class="dur-half">
-      <select class="dp-sel" data-p="dur_sy" data-proj="${idx}" onchange="buildDuration(${idx},'proj')"><option value="">From</option></select>
-      <select class="dp-sel" data-p="dur_ey" data-proj="${idx}" onchange="buildDuration(${idx},'proj')"><option value="">To</option></select>
+    <div class="dur-grid">
+      <div class="dur-half">
+        <select class="dp-sel" data-p="dur_sm" data-proj="${idx}" onchange="buildDuration(${idx},'proj')"><option value="">Month</option>${MONTHS.map(m=>`<option>${m}</option>`).join('')}</select>
+        <select class="dp-sel" data-p="dur_sy" data-proj="${idx}" onchange="buildDuration(${idx},'proj')"><option value="">Year</option></select>
+      </div>
+      <div class="dur-sep">–</div>
+      <div class="dur-half">
+        <select class="dp-sel" data-p="dur_em" data-proj="${idx}" onchange="buildDuration(${idx},'proj')"><option value="">Month</option>${MONTHS.map(m=>`<option>${m}</option>`).join('')}</select>
+        <select class="dp-sel" data-p="dur_ey" data-proj="${idx}" onchange="buildDuration(${idx},'proj')"><option value="">Present</option></select>
+      </div>
     </div>
     <input type="hidden" data-p="duration" data-proj="${idx}" value=""/>
   </div>`;

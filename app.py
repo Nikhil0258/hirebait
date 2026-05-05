@@ -17,7 +17,6 @@ def generate():
         "phone":          request.form.get("phone", ""),
         "linkedin":       request.form.get("linkedin", ""),
         "github":         request.form.get("github", ""),
-        "jobtitle":       request.form.get("jobtitle", ""),
         "summary":        request.form.get("summary", ""),
         "skills":         request.form.get("skills", ""),
         "achievements":   request.form.get("achievements", ""),
