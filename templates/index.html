@@ -196,6 +196,23 @@ input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(
 .color-picker-label{font-size:11px;color:var(--muted)}
 .color-swatch{width:20px;height:20px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:.15s}
 .color-swatch:hover,.color-swatch.selected{border-color:#fff;transform:scale(1.2)}
+
+/* ── DATE PICKER ── */
+.date-range{display:grid;grid-template-columns:1fr 1fr;gap:6px;align-items:end}
+.date-range .date-col{display:flex;flex-direction:column;gap:4px}
+.date-range .date-col label{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.3px;text-transform:uppercase}
+.date-range .date-sep{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;padding-top:18px}
+.date-picker{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+select.dp-sel{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;padding:8px 10px;width:100%;transition:border-color .15s;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23777'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+select.dp-sel:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(212,242,68,.08)}
+select.dp-sel option{background:#1a1a1a;color:var(--text)}
+.duration-wrap{margin-bottom:10px}
+.duration-wrap>label{display:block;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;margin-bottom:4px}
+.dur-grid{display:grid;grid-template-columns:1fr 8px 1fr;gap:4px;align-items:center}
+.dur-sep{text-align:center;color:var(--muted);font-size:13px;padding-top:0}
+.dur-half{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.present-check{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;color:var(--muted);cursor:pointer}
+.present-check input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -302,7 +319,22 @@ input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(
             <div class="field"><label>Company</label><input data-e="company" data-job="0" placeholder="Infosys Ltd."/></div>
             <div class="field"><label>Role</label><input data-e="role" data-job="0" placeholder="Data Engineer"/></div>
           </div>
-          <div class="field"><label>Duration</label><input data-e="duration" data-job="0" placeholder="Jan 2023 – Present"/></div>
+          <div class="duration-wrap">
+            <label>Duration</label>
+            <div class="dur-grid">
+              <div class="dur-half">
+                <select class="dp-sel" data-e="dur_sm" data-job="0" onchange="buildDuration(0,'exp')"><option value="">Month</option><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
+                <select class="dp-sel" data-e="dur_sy" data-job="0" onchange="buildDuration(0,'exp')"><option value="">Year</option></select>
+              </div>
+              <div class="dur-sep">–</div>
+              <div class="dur-half" id="exp-end-0">
+                <select class="dp-sel" data-e="dur_em" data-job="0" onchange="buildDuration(0,'exp')"><option value="">Month</option><option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option><option>May</option><option>Jun</option><option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option></select>
+                <select class="dp-sel" data-e="dur_ey" data-job="0" onchange="buildDuration(0,'exp')"><option value="">Year</option></select>
+              </div>
+            </div>
+            <label class="present-check"><input type="checkbox" onchange="togglePresent(this,0,'exp')"> Currently working here</label>
+            <input type="hidden" data-e="duration" data-job="0" value=""/>
+          </div>
           <div class="field"><label>Responsibilities</label>
             <textarea data-e="description" data-job="0" rows="4" placeholder="- Built ETL pipelines using Python&#10;- Optimised queries by 40%&#10;- Worked with cross-functional teams"></textarea>
           </div>
@@ -321,7 +353,14 @@ input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(
             <div class="field"><label>Tech Used</label><input data-p="tech" data-proj="0" placeholder="Python, SQL"/></div>
           </div>
           <div class="row2">
-            <div class="field"><label>Duration / Year</label><input data-p="duration" data-proj="0" placeholder="Dec 2024 – Jan 2025"/></div>
+            <div class="duration-wrap">
+              <label>Duration / Year</label>
+              <div class="dur-half">
+                <select class="dp-sel" data-p="dur_sy" data-proj="0" onchange="buildDuration(0,'proj')"><option value="">From</option></select>
+                <select class="dp-sel" data-p="dur_ey" data-proj="0" onchange="buildDuration(0,'proj')"><option value="">To</option></select>
+              </div>
+              <input type="hidden" data-p="duration" data-proj="0" value=""/>
+            </div>
             <div class="field"><label>Link (optional)</label><input data-p="link" data-proj="0" placeholder="github.com/ravi/project"/></div>
           </div>
           <div class="field"><label>Description</label>
@@ -339,7 +378,14 @@ input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(
           <div class="job-num">Degree #1</div>
           <div class="row2">
             <div class="field"><label>Degree / Course</label><input data-ed="degree" data-edu="0" placeholder="B.Tech in Computer Science"/></div>
-            <div class="field"><label>Year</label><input data-ed="year" data-edu="0" placeholder="2018 – 2022"/></div>
+            <div class="duration-wrap">
+              <label>Year</label>
+              <div class="dur-half">
+                <select class="dp-sel" data-ed="year_s" data-edu="0" onchange="buildDuration(0,'edu')"><option value="">From</option></select>
+                <select class="dp-sel" data-ed="year_e" data-edu="0" onchange="buildDuration(0,'edu')"><option value="">To</option></select>
+              </div>
+              <input type="hidden" data-ed="year" data-edu="0" value=""/>
+            </div>
           </div>
           <div class="row2">
             <div class="field"><label>College / Institute</label><input data-ed="college" data-edu="0" placeholder="Vignan's LARA Institute"/></div>
@@ -741,11 +787,12 @@ function addJob(){
       <div class="field"><label>Company</label><input data-e="company" data-job="${idx}" placeholder="Company Name"/></div>
       <div class="field"><label>Role</label><input data-e="role" data-job="${idx}" placeholder="Your Role"/></div>
     </div>
-    <div class="field"><label>Duration</label><input data-e="duration" data-job="${idx}" placeholder="Jun 2021 – Dec 2022"/></div>
+    ${makeDurationHTML_exp(idx)}
     <div class="field"><label>Responsibilities</label><textarea data-e="description" data-job="${idx}" rows="4" placeholder="- What you built&#10;- Add numbers for impact"></textarea></div>
     <button type="button" class="btn-remove" onclick="removeJob(this,${idx})">✕ Remove</button>`;
   c.appendChild(b);
-  b.querySelectorAll('input,textarea').forEach(el=>el.addEventListener('input',schedule));
+  initNewYearSelects(b);
+  b.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input',schedule));
   b.querySelector('input').focus();
 }
 function removeJob(btn,idx){btn.closest('.job-block').remove();S.experiences[idx]={company:'',role:'',duration:'',description:''};schedule();}
@@ -764,13 +811,14 @@ function addProject(){
       <div class="field"><label>Tech Used</label><input data-p="tech" data-proj="${idx}" placeholder="Python, SQL"/></div>
     </div>
     <div class="row2">
-      <div class="field"><label>Duration / Year</label><input data-p="duration" data-proj="${idx}" placeholder="2025"/></div>
+      ${makeDurationHTML_proj(idx)}
       <div class="field"><label>Link</label><input data-p="link" data-proj="${idx}" placeholder="github.com/..."/></div>
     </div>
     <div class="field"><label>Description</label><textarea data-p="desc" data-proj="${idx}" rows="2" placeholder="What it does and its impact"></textarea></div>
     <button type="button" class="btn-remove" onclick="removeProj(this,${idx})">✕ Remove</button>`;
   c.appendChild(b);
-  b.querySelectorAll('input,textarea').forEach(el=>el.addEventListener('input',schedule));
+  initNewYearSelects(b);
+  b.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input',schedule));
   b.querySelector('input').focus();
 }
 function removeProj(btn,idx){btn.closest('.job-block').remove();S.projects[idx]={title:'',tech:'',duration:'',link:'',desc:''};schedule();}
@@ -786,7 +834,7 @@ function addEducation(){
   b.innerHTML=`<div class="job-num">Degree #${eduCount}</div>
     <div class="row2">
       <div class="field"><label>Degree / Course</label><input data-ed="degree" data-edu="${idx}" placeholder="Intermediate (MPC)"/></div>
-      <div class="field"><label>Year</label><input data-ed="year" data-edu="${idx}" placeholder="2016 – 2018"/></div>
+      ${makeDurationHTML_edu(idx)}
     </div>
     <div class="row2">
       <div class="field"><label>College</label><input data-ed="college" data-edu="${idx}" placeholder="Narayana Junior College"/></div>
@@ -795,10 +843,128 @@ function addEducation(){
     <div class="field"><label>Location</label><input data-ed="location" data-edu="${idx}" placeholder="Hyderabad, AP"/></div>
     <button type="button" class="btn-remove" onclick="removeEdu(this,${idx})">✕ Remove</button>`;
   c.appendChild(b);
-  b.querySelectorAll('input,textarea').forEach(el=>el.addEventListener('input',schedule));
+  initNewYearSelects(b);
+  b.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input',schedule));
   b.querySelector('input').focus();
 }
 function removeEdu(btn,idx){btn.closest('.job-block').remove();S.education[idx]={degree:'',college:'',year:'',grade:'',location:''};schedule();}
+
+/* ══ DATE PICKER HELPERS ══ */
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const CUR_YEAR = new Date().getFullYear();
+
+function populateYears(sel, from=2000, to=CUR_YEAR, extraOpt='') {
+  const cur = sel.value;
+  sel.innerHTML = `<option value="">${sel.options[0]?.text||'Year'}</option>`;
+  if(extraOpt) sel.add(new Option(extraOpt, extraOpt));
+  for(let y=to; y>=from; y--) sel.add(new Option(y, y));
+  if(cur) sel.value = cur;
+}
+
+function initYearSelects() {
+  document.querySelectorAll('select[data-e="dur_sy"], select[data-e="dur_ey"]').forEach(s => {
+    const lbl = s.dataset.e === 'dur_sy' ? 'Year' : 'Year';
+    populateYears(s);
+  });
+  document.querySelectorAll('select[data-p="dur_sy"], select[data-p="dur_ey"]').forEach(s => {
+    populateYears(s, 2000, CUR_YEAR, 'Present');
+  });
+  document.querySelectorAll('select[data-ed="year_s"], select[data-ed="year_e"]').forEach(s => {
+    populateYears(s, 1990, CUR_YEAR, 'Present');
+  });
+}
+
+function buildDuration(idx, type) {
+  if (type === 'exp') {
+    const sm = document.querySelector(`select[data-e="dur_sm"][data-job="${idx}"]`)?.value || '';
+    const sy = document.querySelector(`select[data-e="dur_sy"][data-job="${idx}"]`)?.value || '';
+    const em = document.querySelector(`select[data-e="dur_em"][data-job="${idx}"]`)?.value || '';
+    const ey = document.querySelector(`select[data-e="dur_ey"][data-job="${idx}"]`)?.value || '';
+    const start = [sm, sy].filter(Boolean).join(' ');
+    const end   = [em, ey].filter(Boolean).join(' ');
+    const val   = start && end ? `${start} – ${end}` : start || end;
+    const hidden = document.querySelector(`input[data-e="duration"][data-job="${idx}"]`);
+    if(hidden) { hidden.value = val; if(S.experiences[idx]) S.experiences[idx].duration = val; }
+  } else if (type === 'proj') {
+    const sy = document.querySelector(`select[data-p="dur_sy"][data-proj="${idx}"]`)?.value || '';
+    const ey = document.querySelector(`select[data-p="dur_ey"][data-proj="${idx}"]`)?.value || '';
+    const val = sy && ey ? `${sy} – ${ey}` : sy || ey;
+    const hidden = document.querySelector(`input[data-p="duration"][data-proj="${idx}"]`);
+    if(hidden) { hidden.value = val; if(S.projects[idx]) S.projects[idx].duration = val; }
+  } else if (type === 'edu') {
+    const sy = document.querySelector(`select[data-ed="year_s"][data-edu="${idx}"]`)?.value || '';
+    const ey = document.querySelector(`select[data-ed="year_e"][data-edu="${idx}"]`)?.value || '';
+    const val = sy && ey ? `${sy} – ${ey}` : sy || ey;
+    const hidden = document.querySelector(`input[data-ed="year"][data-edu="${idx}"]`);
+    if(hidden) { hidden.value = val; if(S.education[idx]) S.education[idx].year = val; }
+  }
+  schedule();
+}
+
+function togglePresent(cb, idx, type) {
+  if (type === 'exp') {
+    const endWrap = document.getElementById(`exp-end-${idx}`);
+    if(endWrap) endWrap.style.opacity = cb.checked ? '0.3' : '1';
+    if(cb.checked) {
+      const hidden = document.querySelector(`input[data-e="duration"][data-job="${idx}"]`);
+      const sm = document.querySelector(`select[data-e="dur_sm"][data-job="${idx}"]`)?.value || '';
+      const sy = document.querySelector(`select[data-e="dur_sy"][data-job="${idx}"]`)?.value || '';
+      const start = [sm, sy].filter(Boolean).join(' ');
+      const val = start ? `${start} – Present` : 'Present';
+      if(hidden) { hidden.value = val; if(S.experiences[idx]) S.experiences[idx].duration = val; }
+      schedule();
+    } else {
+      buildDuration(idx, 'exp');
+    }
+  }
+}
+
+function makeDurationHTML_exp(idx) {
+  return `<div class="duration-wrap">
+    <label>Duration</label>
+    <div class="dur-grid">
+      <div class="dur-half">
+        <select class="dp-sel" data-e="dur_sm" data-job="${idx}" onchange="buildDuration(${idx},'exp')"><option value="">Month</option>${MONTHS.map(m=>`<option>${m}</option>`).join('')}</select>
+        <select class="dp-sel" data-e="dur_sy" data-job="${idx}" onchange="buildDuration(${idx},'exp')"><option value="">Year</option></select>
+      </div>
+      <div class="dur-sep">–</div>
+      <div class="dur-half" id="exp-end-${idx}">
+        <select class="dp-sel" data-e="dur_em" data-job="${idx}" onchange="buildDuration(${idx},'exp')"><option value="">Month</option>${MONTHS.map(m=>`<option>${m}</option>`).join('')}</select>
+        <select class="dp-sel" data-e="dur_ey" data-job="${idx}" onchange="buildDuration(${idx},'exp')"><option value="">Year</option></select>
+      </div>
+    </div>
+    <label class="present-check"><input type="checkbox" onchange="togglePresent(this,${idx},'exp')"> Currently working here</label>
+    <input type="hidden" data-e="duration" data-job="${idx}" value=""/>
+  </div>`;
+}
+
+function makeDurationHTML_proj(idx) {
+  return `<div class="duration-wrap">
+    <label>Duration / Year</label>
+    <div class="dur-half">
+      <select class="dp-sel" data-p="dur_sy" data-proj="${idx}" onchange="buildDuration(${idx},'proj')"><option value="">From</option></select>
+      <select class="dp-sel" data-p="dur_ey" data-proj="${idx}" onchange="buildDuration(${idx},'proj')"><option value="">To</option></select>
+    </div>
+    <input type="hidden" data-p="duration" data-proj="${idx}" value=""/>
+  </div>`;
+}
+
+function makeDurationHTML_edu(idx) {
+  return `<div class="duration-wrap">
+    <label>Year</label>
+    <div class="dur-half">
+      <select class="dp-sel" data-ed="year_s" data-edu="${idx}" onchange="buildDuration(${idx},'edu')"><option value="">From</option></select>
+      <select class="dp-sel" data-ed="year_e" data-edu="${idx}" onchange="buildDuration(${idx},'edu')"><option value="">To</option></select>
+    </div>
+    <input type="hidden" data-ed="year" data-edu="${idx}" value=""/>
+  </div>`;
+}
+
+function initNewYearSelects(container) {
+  container.querySelectorAll('select[data-e="dur_sy"], select[data-e="dur_ey"]').forEach(s => populateYears(s));
+  container.querySelectorAll('select[data-p="dur_sy"], select[data-p="dur_ey"]').forEach(s => populateYears(s, 2000, CUR_YEAR, 'Present'));
+  container.querySelectorAll('select[data-ed="year_s"], select[data-ed="year_e"]').forEach(s => populateYears(s, 1990, CUR_YEAR, 'Present'));
+}
 
 /* ══ DRAG DIVIDER ══ */
 const divider=document.getElementById('divider'),paneForm=document.getElementById('pane-form');
@@ -816,8 +982,10 @@ function showTab(tab){
 
 /* ══ EVENT LISTENERS ══ */
 document.querySelectorAll('[data-k],[data-e],[data-p],[data-ed]').forEach(el=>el.addEventListener('input',schedule));
+document.querySelectorAll('select.dp-sel').forEach(el=>el.addEventListener('change',schedule));
 
 /* ══ INIT ══ */
+initYearSelects();
 renderPaper(); syncForm();
 </script>
 </body>
